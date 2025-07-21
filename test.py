@@ -105,6 +105,7 @@ def main():
 
     # Define multiple MAVLink TCP connections: (IP, PORT, IDENTIFIER)
     mavlink_connections = [
+        ('127.0.0.1', 14550, 'MP4'),
         ('192.168.0.182', 5762, 'MP1'),
         ('192.168.0.183', 5763, 'MP2'),
         ('192.168.0.184', 5764, 'MP3'),
