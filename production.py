@@ -7,7 +7,7 @@ from pymavlink import mavutil
 from pyais import decode
 
 # Configuration
-TCP_IP = "0.0.0.0"
+TCP_IP = "127.0.0.1"
 TCP_PORT = 5000
 UDP_IP = "0.0.0.0"
 UDP_PORT = 5001
