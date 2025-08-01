@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AIS Data Receiver Dashboard</title>
+  <style>
+    /* Bright, modern color palette */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #4a90e2, #50e3c2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #f0f9ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      user-select: none;
+    }
+    h1 {
+      margin-top: 25px;
+      font-size: 2.5rem;
+      letter-spacing: 1.3px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .info-row {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin: 15px 0 30px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+    }
+    .dashboard {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 30px 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+      width: 90%;
+      max-width: 750px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 25px;
+      color: #1b2735;
+    }
+    .data-box {
+      background: #ffffffcc;
+      padding: 30px 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      transition: background-color 0.3s ease;
+      cursor: default;
+      user-select: text;
+    }
+    .data-box strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.6rem;
+      color: #3e4342;
+     
+    }
+    .data-box:hover {
+      background-color: #f0f8ff;
+      box-shadow: 0 10px 30px rgba(32, 112, 255, 0.5);
+      color: #1054d1;
+    }
+    .data-box.mmsi-count {
+  grid-column: 1 / span 2; /* Span both columns */
+  justify-self: center;    /* Center horizontally */
+}
+    @media (max-width: 600px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        width: 95%;
+        padding: 25px 20px;
+        gap: 20px;
+      }
+      .info-row {
+        flex-direction: column;
+        gap: 10px;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>AIS Data Receiver Dashboard</h1>
+  <div class="info-row">
+    <div>Source: TCP</div>
+    <div>Sender IP: <span id="sender-ip">Unknown</span></div>
+    <div>Status: <span id="status">Inactive</span></div>
+  </div>
+  <div class="dashboard">
+    <div class="data-box"><strong>MMSI</strong> <span id="mmsi">-</span></div>
+    <div class="data-box"><strong>Heading</strong> <span id="heading">-</span></div>
+    <div class="data-box"><strong>Latitude</strong> <span id="lat">-</span></div>
+    <div class="data-box"><strong>Longitude</strong> <span id="lon">-</span></div>
+    <div class="data-box mmsi-count"><strong>MMSI Count</strong> <span id="mmsi-count">0</span></div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('connect', () => {
+      console.log('Socket.IO connected');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket.IO disconnected');
+    });
+
+    socket.on('update', (data) => {
+      document.getElementById('mmsi').textContent = data.mmsi || "-";
+      document.getElementById('lat').textContent = data.lat !== null ? data.lat.toFixed(6) : "-";
+      document.getElementById('lon').textContent = data.lon !== null ? data.lon.toFixed(6) : "-";
+      document.getElementById('heading').textContent = data.heading || "-";
+      document.getElementById('sender-ip').textContent = data.sender || "Unknown";
+      document.getElementById('status').textContent = data.status || "Inactive";
+      document.getElementById('mmsi-count').textContent = data.mmsi_count || 0;
+      document.getElementById('unique-mmsis-count').textContent = data.mmsi_count || 0;
+    });
+  </script>
+</body>
+</html>
